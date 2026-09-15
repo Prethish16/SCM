@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<p class="muted">Hello, {{ user['Name'] }}. Here is where your money stands.</p>
+
+<div class="stat-grid">
+  <div class="card stat">
+    <span class="stat-label">Total Income</span>
+    <span class="stat-value stat-income">{{ '%.2f'|format(total_income) }}</span>
+  </div>
+  <div class="card stat">
+    <span class="stat-label">Total Expenses</span>
+    <span class="stat-value stat-expense">{{ '%.2f'|format(total_expenses) }}</span>
+  </div>
+  <div class="card stat">
+    <span class="stat-label">Remaining Balance</span>
+    <span class="stat-value {{ 'stat-income' if balance >= 0 else 'stat-expense' }}">
+      {{ '%.2f'|format(balance) }}
+    </span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Recent Transactions</h2>
+  {% if recent_transactions %}
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Detail</th><th>Amount</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      {% for txn in recent_transactions %}
+      <tr>
+        <td><span class="tag tag-{{ txn.type }}">{{ txn.type|capitalize }}</span></td>
+        <td>
+          {% if txn.type == 'income' %}{{ txn['Source'] }}
+          {% else %}{{ txn['Category'] }}{% if txn['Description'] %} &mdash; {{ txn['Description'] }}{% endif %}{% endif %}
+        </td>
+        <td class="{{ 'amount-income' if txn.type == 'income' else 'amount-expense' }}">
+          {{ '+' if txn.type == 'income' else '-' }}{{ '%.2f'|format(txn['Amount']) }}
+        </td>
+        <td>{{ txn['Date'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No transactions yet. Add your first
+    <a href="{{ url_for('transactions.add_income') }}">income</a> or
+    <a href="{{ url_for('transactions.add_expense') }}">expense</a>.
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

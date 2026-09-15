@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}History - Expense Tracker{% endblock %}
+{% block content %}
+<h1>Transaction History</h1>
+<p class="muted">All income and expense records, newest first.</p>
+
+<div class="card">
+  {% if transactions %}
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Detail</th><th>Amount</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      {% for txn in transactions %}
+      <tr>
+        <td><span class="tag tag-{{ txn.type }}">{{ txn.type|capitalize }}</span></td>
+        <td>
+          {% if txn.type == 'income' %}{{ txn['Source'] }}
+          {% else %}{{ txn['Category'] }}{% if txn['Description'] %} &mdash; {{ txn['Description'] }}{% endif %}{% endif %}
+        </td>
+        <td class="{{ 'amount-income' if txn.type == 'income' else 'amount-expense' }}">
+          {{ '+' if txn.type == 'income' else '-' }}{{ '%.2f'|format(txn['Amount']) }}
+        </td>
+        <td>{{ txn['Date'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">Nothing recorded yet. Add your first
+    <a href="{{ url_for('transactions.add_income') }}">income</a> or
+    <a href="{{ url_for('transactions.add_expense') }}">expense</a>.
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

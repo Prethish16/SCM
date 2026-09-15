@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Add Expense - Expense Tracker{% endblock %}
+{% block content %}
+<div class="form-card card">
+  <h1>Add Expense</h1>
+  <form method="post">
+    <label for="amount">Amount</label>
+    <input type="number" step="0.01" min="0.01" id="amount" name="amount"
+           value="{{ form.amount or '' }}" required>
+
+    <label for="category">Category <span class="muted">(defaults to General)</span></label>
+    <input type="text" id="category" name="category" placeholder="e.g. Food, Transport"
+           value="{{ form.category or '' }}">
+
+    <label for="description">Description <span class="muted">(optional)</span></label>
+    <input type="text" id="description" name="description"
+           placeholder="What was this expense for?"
+           value="{{ form.description or '' }}">
+
+    <label for="date">Date</label>
+    <input type="date" id="date" name="date" value="{{ form.date or '' }}" required>
+
+    <button type="submit" class="btn btn-primary">Add expense</button>
+  </form>
+</div>
+{% endblock %}
