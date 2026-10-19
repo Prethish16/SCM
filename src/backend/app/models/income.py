@@ -44,3 +44,36 @@ def recent(user_id, limit):
             (user_id, limit),
         )
         return cur.fetchall()
+
+
+def get_by_id(user_id, income_id):
+    """Return one income record owned by the user, or None."""
+    conn = get_db()
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT IncomeID, Amount, Source, Date FROM Income "
+            "WHERE IncomeID = %s AND UserID = %s",
+            (income_id, user_id),
+        )
+        return cur.fetchone()
+
+
+def update_income(user_id, income_id, amount, source, date):
+    """Update one income record owned by the user."""
+    conn = get_db()
+    with conn.cursor() as cur:
+        return cur.execute(
+            "UPDATE Income SET Amount = %s, Source = %s, Date = %s "
+            "WHERE IncomeID = %s AND UserID = %s",
+            (amount, source, date, income_id, user_id),
+        )
+
+
+def delete_income(user_id, income_id):
+    """Delete one income record owned by the user."""
+    conn = get_db()
+    with conn.cursor() as cur:
+        return cur.execute(
+            "DELETE FROM Income WHERE IncomeID = %s AND UserID = %s",
+            (income_id, user_id),
+        )

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Edit Income - Expense Tracker{% endblock %}
+{% block content %}
+<div class="form-card card">
+  <h1>Edit Income</h1>
+  <form method="post">
+    <label for="amount">Amount</label>
+    <input type="number" step="0.01" min="0.01" id="amount" name="amount"
+           value="{{ form['Amount'] or '' }}" required>
+
+    <label for="source">Source</label>
+    <input type="text" id="source" name="source" value="{{ form['Source'] or '' }}" required>
+
+    <label for="date">Date</label>
+    <input type="date" id="date" name="date" value="{{ form['Date'] or '' }}" required>
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <a class="btn btn-secondary" href="{{ url_for('transactions.history') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

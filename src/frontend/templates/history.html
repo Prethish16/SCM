@@ -4,11 +4,44 @@
 <h1>Transaction History</h1>
 <p class="muted">All income and expense records, newest first.</p>
 
+<div class="card filter-card">
+  <form method="get" class="filter-form">
+    <div>
+      <label for="search">Search</label>
+      <input type="search" id="search" name="search"
+             placeholder="Source, category, or description"
+             value="{{ filters.search }}">
+    </div>
+    <div>
+      <label for="type">Type</label>
+      <select id="type" name="type">
+        <option value="">All transactions</option>
+        <option value="income" {% if filters.type == 'income' %}selected{% endif %}>Income</option>
+        <option value="expense" {% if filters.type == 'expense' %}selected{% endif %}>Expense</option>
+      </select>
+    </div>
+    <div>
+      <label for="date_from">From</label>
+      <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
+    </div>
+    <div>
+      <label for="date_to">To</label>
+      <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      {% if has_filters %}
+      <a class="clear-filter" href="{{ url_for('transactions.history') }}">Clear</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
 <div class="card">
   {% if transactions %}
   <table>
     <thead>
-      <tr><th>Type</th><th>Detail</th><th>Amount</th><th>Date</th></tr>
+      <tr><th>Type</th><th>Detail</th><th>Amount</th><th>Date</th><th>Actions</th></tr>
     </thead>
     <tbody>
       {% for txn in transactions %}
@@ -22,14 +55,30 @@
           {{ '+' if txn.type == 'income' else '-' }}{{ '%.2f'|format(txn['Amount']) }}
         </td>
         <td>{{ txn['Date'] }}</td>
+        <td class="actions">
+          {% if txn.type == 'income' %}
+          <a href="{{ url_for('transactions.edit_income', income_id=txn.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('transactions.delete_income', income_id=txn.id) }}">
+            <button type="submit" class="link-button" onclick="return confirm('Delete this income record?')">Delete</button>
+          </form>
+          {% else %}
+          <a href="{{ url_for('transactions.edit_expense', expense_id=txn.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('transactions.delete_expense', expense_id=txn.id) }}">
+            <button type="submit" class="link-button" onclick="return confirm('Delete this expense record?')">Delete</button>
+          </form>
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <p class="muted">Nothing recorded yet. Add your first
+  <p class="muted">{% if has_filters %}No transactions match these filters.
+    <a href="{{ url_for('transactions.history') }}">Clear filters</a>.
+  {% else %}Nothing recorded yet. Add your first
     <a href="{{ url_for('transactions.add_income') }}">income</a> or
     <a href="{{ url_for('transactions.add_expense') }}">expense</a>.
+  {% endif %}
   </p>
   {% endif %}
 </div>

@@ -1,6 +1,6 @@
 """MySQL connection management for Flask."""
 import pymysql
-from flask import g
+from flask import current_app, g
 
 from .config import Config
 
@@ -25,3 +25,8 @@ def close_db(_exc=None):
     db_conn = g.pop("db", None)
     if db_conn is not None:
         db_conn.close()
+
+
+def log_db_exception(message):
+    """Log a database failure through the active Flask application."""
+    current_app.logger.exception(message)

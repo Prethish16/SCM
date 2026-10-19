@@ -1,6 +1,7 @@
 """Dashboard route: totals, balance, recent transactions."""
 from flask import Blueprint, render_template
 
+from .. import db
 from ..helpers import flash_db_error, get_current_user, login_required
 from ..models import expenses, income
 
@@ -12,17 +13,20 @@ RECENT_LIMIT = 5
 @bp.route("/")
 @login_required
 def index():
-    user = get_current_user()
-
     try:
+        user = get_current_user()
+        if user is None:
+            return render_template("dashboard.html", user={}, total_income=0,
+                                   total_expenses=0, balance=0,
+                                   recent_transactions=[])
         inc_totals = income.totals(user["UserID"])
         exp_totals = expenses.totals(user["UserID"])
         recent_income = income.recent(user["UserID"], RECENT_LIMIT)
         recent_expenses = expenses.recent(user["UserID"], RECENT_LIMIT)
     except Exception:
-        from .. import db
-        db.get_app().logger.exception("DB failure loading dashboard")
+        db.log_db_exception("DB failure loading dashboard")
         flash_db_error()
+        user = {"Name": "there"}
         inc_totals = {"total_income": 0}
         exp_totals = {"total_expenses": 0}
         recent_income = []

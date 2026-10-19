@@ -22,7 +22,11 @@ Automated cases are marked ✅ in the "Automated" column and implemented in `tes
 | TC-15 | FR-08 | History ordering | Add records across several dates | Newest records first; income and expense rows interleaved by date | — |
 | TC-16 | FR-10 | Database unavailable message | Stop MySQL, then attempt login | Friendly DB-unavailable flash; no stack trace shown | — |
 | TC-17 | FR-02 | Unauthenticated access blocked | Open `/` while logged out | Redirected to login page | — |
+| TC-18 | FR-11 | Edit income | Open Edit for an income record and save valid changes | Record is updated and remains owned by the same user | — |
+| TC-19 | FR-11 | Edit expense | Open Edit for an expense record and save valid changes | Record is updated and visible with new values | — |
+| TC-20 | FR-12 | Delete transaction | Delete an income or expense record | Record is removed and totals/history update | — |
+| TC-21 | FR-11, FR-12 | Transaction ownership | Try to edit/delete another user's record | Record is not exposed or changed | — |
 
 ## Notes
-- Automated units cover input-validation logic without a database (TC-02/03/09/10/13); the remaining cases are exercised manually per this register during release testing, since they require a live MySQL instance.
+- Automated units cover input-validation logic without a database (TC-02/03/09/10/13 plus amount-boundary cases); the remaining cases are exercised manually per this register during release testing, since they require a live MySQL instance.
 - New FRs introduced in later versions (FR-11 …) must add test cases here in the same release.

@@ -45,3 +45,36 @@ def recent(user_id, limit):
             (user_id, limit),
         )
         return cur.fetchall()
+
+
+def get_by_id(user_id, expense_id):
+    """Return one expense record owned by the user, or None."""
+    conn = get_db()
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT ExpenseID, Category, Amount, Description, Date FROM Expenses "
+            "WHERE ExpenseID = %s AND UserID = %s",
+            (expense_id, user_id),
+        )
+        return cur.fetchone()
+
+
+def update_expense(user_id, expense_id, amount, category, description, date):
+    """Update one expense record owned by the user."""
+    conn = get_db()
+    with conn.cursor() as cur:
+        return cur.execute(
+            "UPDATE Expenses SET Amount = %s, Category = %s, Description = %s, Date = %s "
+            "WHERE ExpenseID = %s AND UserID = %s",
+            (amount, category, description, date, expense_id, user_id),
+        )
+
+
+def delete_expense(user_id, expense_id):
+    """Delete one expense record owned by the user."""
+    conn = get_db()
+    with conn.cursor() as cur:
+        return cur.execute(
+            "DELETE FROM Expenses WHERE ExpenseID = %s AND UserID = %s",
+            (expense_id, user_id),
+        )

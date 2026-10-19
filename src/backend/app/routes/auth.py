@@ -16,6 +16,8 @@ def _valid_registration(name, email, password):
     """Return an error message for invalid registration input, else None."""
     if not name or not email or not password:
         return "All fields are required."
+    if len(name) > 100 or len(email) > 255:
+        return "Name or email is too long."
     if not EMAIL_RE.match(email):
         return "Please enter a valid email address."
     if len(password) < 6:
@@ -41,7 +43,7 @@ def register():
                 return render_template("register.html", name=name, email=email)
             users.create_user(name, email, password)
         except Exception:
-            db.get_app().logger.exception("DB failure during registration")
+            db.log_db_exception("DB failure during registration")
             flash_db_error()
             return render_template("register.html", name=name, email=email)
 
@@ -64,7 +66,7 @@ def login():
         try:
             user = users.verify_login(email, password)
         except Exception:
-            db.get_app().logger.exception("DB failure during login")
+            db.log_db_exception("DB failure during login")
             flash_db_error()
             return render_template("login.html", email=email)
 

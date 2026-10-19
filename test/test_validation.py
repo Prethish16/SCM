@@ -66,6 +66,16 @@ class TestTransactionParsing:
     def test_rejects_negative_amount(self):
         assert _parse_common({"amount": "-5", "date": "2026-09-15"})[2] is not None
 
+    def test_rejects_non_finite_amount(self):
+        assert _parse_common({"amount": "NaN", "date": "2026-09-15"})[2] is not None
+        assert _parse_common({"amount": "Infinity", "date": "2026-09-15"})[2] is not None
+
+    def test_rejects_more_than_two_decimal_places(self):
+        assert _parse_common({"amount": "10.999", "date": "2026-09-15"})[2] is not None
+
+    def test_rejects_amount_larger_than_database_precision(self):
+        assert _parse_common({"amount": "100000000", "date": "2026-09-15"})[2] is not None
+
     def test_rejects_invalid_date(self):
         assert _parse_common({"amount": "10", "date": "31-02-2026"})[2] is not None
         assert _parse_common({"amount": "10", "date": "2026/09/15"})[2] is not None
